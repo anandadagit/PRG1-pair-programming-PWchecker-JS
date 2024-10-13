@@ -19,12 +19,27 @@ function getCurrentDateTimeFormatted() {
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 }
 
-function readInFile(filename){
-  const data = fs.readFileSync(inputFile, "utf-8");
-  const lines = data.split(/\n/);
+function getPasswords(filename) {
+  const data = fs.readFileSync(inputFile, "utf-8");  
+  return data.split(/\n/);
+}
 
+function getNewPassword() {
+  const password = readline.question("Please enter your password: ", {
+    hideEchoBack: true  // Masks the password input for privacy
+  });
+  return password;
+}
 
-  return "nothing at the moment, change this line";
+function checkIfCommonPassword(existingPasswords){  
+  const password = getNewPassword();
+  if( existingPasswords.includes(password)) {
+    console.log("You have chosen a commonly used password. Try again!");
+    checkIfCommonPassword(existingPasswords);
+  }
+  else {
+    console.log("The password you chose is safe");
+  } 
 }
 
 const passwordCriteria = {
@@ -85,10 +100,9 @@ function getPasswordFromUser() {
 
 
 // Call a function to read in the data from a file.
-const poorPasswords = readInFile(outputFile); 
+let existingPasswords = getPasswords(inputFile);
 
-// Enter code to read in the 25 most common passwords from the text file here.
-getPasswordFromUser();
+checkIfCommonPassword(existingPasswords);
 
 
 
