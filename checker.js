@@ -2,6 +2,7 @@ const fs = require("fs"); // Importing fs to allow us to use it.
 const readline = require('readline-sync');  // Import readline-sync for synchronous input
 
 const outputFile = "./checking_password_log.txt";
+const inputFile = "./common_passwords.txt";
 
 
 // No need for a comment as the function name is self-describing.
@@ -19,6 +20,8 @@ function getCurrentDateTimeFormatted() {
 }
 
 function readInFile(filename){
+  const data = fs.readFileSync(inputFile, "utf-8");
+  const lines = data.split(/\n/);
 
 
   return "nothing at the moment, change this line";
