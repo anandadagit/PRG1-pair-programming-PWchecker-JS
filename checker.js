@@ -1,3 +1,4 @@
+const commonPassword = require('./check-common-passwords');
 const fs = require("fs"); // Importing fs to allow us to use it.
 const readline = require('readline-sync');  // Import readline-sync for synchronous input
 
@@ -17,29 +18,6 @@ function getCurrentDateTimeFormatted() {
   const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-}
-
-function getPasswords(filename) {
-  const data = fs.readFileSync(inputFile, "utf-8");  
-  return data.split(/\n/);
-}
-
-function getNewPassword() {
-  const password = readline.question("Please enter your password: ", {
-    hideEchoBack: true  // Masks the password input for privacy
-  });
-  return password;
-}
-
-function checkIfCommonPassword(existingPasswords){  
-  const password = getNewPassword();
-  if( existingPasswords.includes(password)) {
-    console.log("You have chosen a commonly used password. Try again!");
-    checkIfCommonPassword(existingPasswords);
-  }
-  else {
-    console.log("The password you chose is safe");
-  } 
 }
 
 const passwordCriteria = {
@@ -78,31 +56,36 @@ function getPasswordStrength(password) {
   }
 
 
-function getPasswordFromUser() {
+function checkPassword() {
     const password = readline.question("Please enter your password: ", {
         hideEchoBack: true  // Masks the password input for privacy
     });
-    const currentDateTime = getCurrentDateTimeFormatted();
-    fs.appendFileSync(outputFile, `${currentDateTime}\n`, "utf-8");
+    const currentDateTime = getCurrentDateTimeFormatted();    
 
     const strength = getPasswordStrength(password);
     console.log(`Password strength: ${strength}`);
 
-    if (strength === "Strong") {
-        console.log("Your password is strong.");
+    let existingPasswords = commonPassword.getPasswords(inputFile);
+    let common = commonPassword.isCommonPassword(existingPasswords, password);
+
+    if (strength === "Strong" && !common) {
+        console.log("Your password is strong");
+        const scrambledPassword = password.slice(password.length - 2) + password.slice(2,password.length - 2) + password.slice(0, 2)
+        fs.appendFileSync(outputFile, `${currentDateTime} ${scrambledPassword}\n`, "utf-8");
     } else {
         console.log("Password does not meet the criteria. Please enter a different password.");
-        getPasswordFromUser();  
+        checkPassword();  
     }
 }
 
 // End of functions
+checkPassword();
 
+/*let existingPasswords = commonPassword.getPasswords(inputFile);
+const password = 'anand';
+let common = commonPassword.isCommonPassword(existingPasswords, password);
+common ? console.log("Common") : console.log("not common");*/
 
-// Call a function to read in the data from a file.
-let existingPasswords = getPasswords(inputFile);
-
-checkIfCommonPassword(existingPasswords);
 
 
 

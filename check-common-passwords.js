@@ -20,24 +20,24 @@ function getNewPassword() {
   return password;
 }
 
-function checkIfCommonPassword(existingPasswords){  
-  const password = getNewPassword();
-  if( existingPasswords.includes(password)) {
-    console.log("You have chosen a commonly used password. Try again!");
-    checkIfCommonPassword(existingPasswords);
+function isCommonPassword(existingPasswords, password){    
+  if( existingPasswords.includes(password)) {    
+    return true;
   }
-  else {
-    console.log("The password you chose is safe");
+  else {    
+    return false;
   } 
 }
 
 // End of functions
 
-
 // Call a function to read in the data from a file.
-let existingPasswords = getPasswords(inputFile);
+/*let existingPasswords = getPasswords(inputFile);
+const password = getNewPassword();
+let commonPassword = isCommonPassword(existingPasswords, password);
+commonPassword ? console.log("Common") : console.log("not common");*/
 
-checkIfCommonPassword(existingPasswords);
+module.exports = {getPasswords, isCommonPassword};
 
 
 
